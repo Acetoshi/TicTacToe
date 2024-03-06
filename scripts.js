@@ -1,5 +1,9 @@
 
-// grid cells will be refered to using an XY system, 00 is in the top left corner. 
+// grid cells will be refered to using this layout :  
+//  0 1 2
+//  3 4 5
+//  6 7 8
+
 const cells = [
     document.getElementById("100000000"),
     document.getElementById("010000000"),
@@ -19,7 +23,6 @@ console.log(controller)
 let gameBoard = ['', '', '', '', '', '', '', '', '']
 
 
-clearAllCells();
 
 //initialise all cells and make them clickable
 for (i = 0; i < 9; i++) {
@@ -38,15 +41,15 @@ function putSymbol(i, symbol) {
 
 
 
-function clearAllCells() {
-
-}
-
 function makeMove(lastMoveIndex) {
 
     gameBoard[lastMoveIndex] = 'X'
 
     // Check if player has won. 
+    if (hasTheGameEnded(gameBoard) == 1){
+        console.log("bien ouèj maggle")
+        return;
+    }
 
 
     // DUMB MODE : the computer plays at random 
@@ -68,4 +71,34 @@ function makeMove(lastMoveIndex) {
             console.log(i);
         }
     }
+}
+
+
+//This function checks if the game isn't finished (0) has been won(1), lost(2), or if it's a draw.
+function hasTheGameEnded(gameBoard) {
+    //  0 1 2
+    //  3 4 5
+    //  6 7 8
+    //const winConditions = ['012', '345', '678','036', '147', '258', '048', '264']
+    const winConditions = [[0,1,2], [3,4,5], [6,7,8],[0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,6,4]]
+
+    //First, convert all the moves of the player to a string, made of the indexes of where he/she has played
+    let playerMoves = '';
+    for (i = 0; i < 9; i++) {
+        if (gameBoard[i] == 'X') {
+            playerMoves += String(i);
+        }
+    }
+
+    //Then check for every winning condition if he/she meets it. 
+    let playerHasWon = false;
+    for (i = 0; i < 8; i++){
+       if (playerMoves.includes(String(winConditions[i][0])) && playerMoves.includes(String(winConditions[i][1]))&&playerMoves.includes(String(winConditions[i][2])) ){
+        console.log("c'est win maggle")
+        return 1;
+       }
+    }
+
+    // If no end gmae condition is met, the game continues.
+    return 0;
 }
