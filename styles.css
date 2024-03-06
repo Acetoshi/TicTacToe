@@ -1,0 +1,60 @@
+:root{
+    --color-light : #F8FFE5;
+    --color-good : #06D6A0;
+    --color-bad: #EF476F;
+    --color-background : #1B9AAA;
+    --color-highlight :#FFC43D;
+
+    --grid-font: arial;
+}
+
+/* RESET ALL BROWSER margins & paddings */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    background-color: var(--color-background) ;
+}
+
+nav {
+    background-color: var(--color-highlight);
+    margin:0;
+    border: 0;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+}
+
+main{
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-background);
+}
+
+.grid{
+    display: grid;
+    grid-template: 1fr 1fr 1fr / 1fr 1fr 1fr;
+    gap: 30px;
+}
+
+.cell{
+    height: 200px;
+    width: 200px;
+    background-color: var(--color-light);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: var(--grid-font);
+    font-size:150px;
+}
+
+.cell:hover {
+    transform: scale(1.2);
+}
