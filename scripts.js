@@ -18,16 +18,16 @@ clearAllCells();
 
 //initialise all cells and make them clickable
 for (i=0; i<9; i++){
-    const targetCell=cells[i]
+    const targetCell=cells[i] // Apparently needed to pass the element into the addEventListener. I wonder why ? 
     cells[i].addEventListener("click", function() {
-        putSymbol(targetCell,'x');
+        putSymbol(targetCell,'x');  // Breaks if cells[i] is used instead of targetCells
     });
 };
 
 
 function putSymbol(targetCell,symbol){
     targetCell.innerHTML = symbol;
-    console.log('clicked cell00')
+    console.log('putting '+symbol+' in cell'+String(targetCell))
 }
 
 function clearAllCells () {
