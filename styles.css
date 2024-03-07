@@ -5,7 +5,8 @@
     --color-background : #1B9AAA;
     --color-highlight :#FFC43D;
 
-    --grid-font: arial;
+    --grid-font: "Dongle", sans-serif;
+    --grid-font-size: 300px;
 }
 
 /* RESET ALL BROWSER margins & paddings */
@@ -24,9 +25,11 @@ nav {
     background-color: var(--color-highlight);
     margin:0;
     border: 0;
-    padding: 5px;
+    padding: 10px;
     display: flex;
     justify-content: center;
+    font-family: var(--grid-font);
+    font-size: 50px;
 }
 
 main{
@@ -53,7 +56,7 @@ main{
     justify-content: center;
     align-items: center;
     font-family: var(--grid-font);
-    font-size:150px;
+    font-size:var(--grid-font-size);
 }
 
 .winning-cell {
@@ -62,7 +65,7 @@ main{
     background-color: var(--color-good);
     border-radius: 10px;
     font-family: var(--grid-font);
-    font-size:150px;
+    font-size:var(--grid-font-size);
 }
 
 .clickable:hover {

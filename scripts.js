@@ -61,7 +61,7 @@ function makeMove(lastMoveIndex) {
     while (gameBoard[moveIndex] != '') {
         moveIndex = Math.floor(Math.random() * 8);
     }
-    cells[moveIndex].innerHTML = 'O';
+    cells[moveIndex].innerHTML = 'o';
     gameBoard[moveIndex] = 'O'
 
     //Check if computer has won 
@@ -170,59 +170,59 @@ function putSymbol(i, symbol) {
 }
 
 function MakeTickableCell0() {
-    cells[0].innerHTML = 'X';
+    cells[0].innerHTML = 'x';
     console.log('putting X in cell 0')
     removeAllEventListeners();
     makeMove(0);
 };
 function MakeTickableCell1() {
-    cells[1].innerHTML = 'X';
+    cells[1].innerHTML = 'x';
     console.log('putting X in cell 0')
     removeAllEventListeners();
     makeMove(1);
 };
 function MakeTickableCell2() {
-    cells[2].innerHTML = 'X';
+    cells[2].innerHTML = 'x';
     console.log('putting X in cell 0')
     removeAllEventListeners();
     makeMove(2);
 };
 function MakeTickableCell3() {
-    cells[3].innerHTML = 'X';
+    cells[3].innerHTML = 'x';
     console.log('putting X in cell 0')
     removeAllEventListeners();
     makeMove(3);
 };
 function MakeTickableCell4() {
-    cells[4].innerHTML = 'X';
+    cells[4].innerHTML = 'x';
     console.log('putting X in cell 0')
     removeAllEventListeners();
     makeMove(4);
 };
 
 function MakeTickableCell5() {
-    cells[5].innerHTML = 'X';
+    cells[5].innerHTML = 'x';
     console.log('putting X in cell 0')
     removeAllEventListeners();
     makeMove(5);
 };
 
 function MakeTickableCell6() {
-    cells[6].innerHTML = 'X';
+    cells[6].innerHTML = 'x';
     console.log('putting X in cell 0')
     removeAllEventListeners();
     makeMove(6);
 };
 
 function MakeTickableCell7() {
-    cells[7].innerHTML = 'X';
+    cells[7].innerHTML = 'x';
     console.log('putting X in cell 0')
     removeAllEventListeners();
     makeMove(7);
 };
 
 function MakeTickableCell8() {
-    cells[8].innerHTML = 'X';
+    cells[8].innerHTML = 'x';
     console.log('putting X in cell 0')
     removeAllEventListeners();
     makeMove(8);
