@@ -43,6 +43,7 @@ main{
     gap: 30px;
 }
 
+/* Cells styles  */
 .cell{
     height: 200px;
     width: 200px;
@@ -55,6 +56,15 @@ main{
     font-size:150px;
 }
 
-.cell:hover {
+.winning-cell {
+    height: 200px;
+    width: 200px;
+    background-color: var(--color-good);
+    border-radius: 10px;
+    font-family: var(--grid-font);
+    font-size:150px;
+}
+
+.clickable:hover {
     transform: scale(1.2);
 }

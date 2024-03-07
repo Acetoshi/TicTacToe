@@ -1,4 +1,12 @@
 
+//TODO : a chaque tour, les fonctions continuent d'exister. 
+// pbl : the event listeners multiply in a recursive fashion (ie turn 3 there's 3 eventListeners.)
+
+// A ESSAYER : créer 9 fonction différentes et les utiliser en fonciton de i fonctions (makeTickableCell1, makeTickableCell2)
+// element.removeEventListener("mousedown", tickCell1, true);
+
+
+
 // grid cells will be refered to using this layout :  
 //  0 1 2
 //  3 4 5
@@ -30,20 +38,9 @@ function startGame() {
     controller = new AbortController();
     gameBoard = ['', '', '', '', '', '', '', '', ''];
     for (i = 0; i < 9; i++) {
-        cells[i].addEventListener("click", putSymbol(i, 'x'), { signal: controller.signal });
+        makeCellTickable(i);
     };
 }
-
-// Callback function for the evenlisteners.
-function putSymbol(i, symbol) {
-    return function putSymbolCallback() {
-        cells[i].innerHTML = symbol;
-        console.log('putting ' + symbol + ' in cell ' + String(i))
-        controller.abort();
-        makeMove(i);
-    };
-}
-
 
 
 function makeMove(lastMoveIndex) {
@@ -53,6 +50,8 @@ function makeMove(lastMoveIndex) {
     // Check if player has won. 
     if (hasTheGameEnded(gameBoard) == 1) {
         console.log("bien ouèj maggle")
+        // controller = new AbortController();
+        // controller.abort();
         return;
     }
 
@@ -63,7 +62,7 @@ function makeMove(lastMoveIndex) {
     while (gameBoard[moveIndex] != '') {
         moveIndex = Math.floor(Math.random() * 8);
     }
-    cells[moveIndex].innerHTML = 'o';
+    cells[moveIndex].innerHTML = 'O';
     gameBoard[moveIndex] = 'O'
 
 
@@ -72,8 +71,11 @@ function makeMove(lastMoveIndex) {
     controller = new AbortController();
     // make only free cells clickable
     for (i = 0; i < 9; i++) {
-        if (gameBoard[i] == '') {
-            cells[i].addEventListener("click", putSymbol(i, 'x', { signal: controller.signal }));  /// Problem : abort controller can not be re-used. 
+        if (gameBoard[i] === '') {
+            // kill all remaining clickable stuff
+            controller.abort();
+            controller = new AbortController();
+            makeCellTickable(i)
             console.log(i);
         }
     }
@@ -88,6 +90,8 @@ function hasTheGameEnded(gameBoard) {
     //const winConditions = ['012', '345', '678','036', '147', '258', '048', '264']
     const winConditions = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 6, 4]]
 
+    let gameState = 0;
+
     //First, convert all the moves of the player to a string, made of the indexes of where he/she has played
     let playerMoves = '';
     for (i = 0; i < 9; i++) {
@@ -97,14 +101,154 @@ function hasTheGameEnded(gameBoard) {
     }
 
     //Then check for every winning condition if he/she meets it. 
-    let playerHasWon = false;
     for (i = 0; i < 8; i++) {
         if (playerMoves.includes(String(winConditions[i][0])) && playerMoves.includes(String(winConditions[i][1])) && playerMoves.includes(String(winConditions[i][2]))) {
             console.log("c'est win maggle")
-            return 1;
+            gameState = 1;
+            // apply 'winning-cell' class to all the cells that made the player win
+            for (i = 0; i < 8; i++) {
+                cells[i].classList.add("winning-cell");
+            }
         }
     }
 
+
+
     // If no end gmae condition is met, the game continues.
-    return 0;
+    return gameState;
 }
+
+
+
+
+
+
+// Callback function for the evenlisteners.
+function putSymbol(i, symbol) {
+    return function putSymbolCallback() {
+        cells[i].innerHTML = symbol;
+        console.log('putting ' + symbol + ' in cell ' + String(i))
+        controller.abort();
+        makeMove(i);
+    };
+}
+
+function MakeTickableCell0() {
+    cells[0].innerHTML = 'X';
+    console.log('putting X in cell 0')
+    removeAllEventListeners();
+    makeMove(0);
+};
+function MakeTickableCell1() {
+    cells[1].innerHTML = 'X';
+    console.log('putting X in cell 0')
+    removeAllEventListeners();
+    makeMove(1);
+};
+function MakeTickableCell2() {
+    cells[2].innerHTML = 'X';
+    console.log('putting X in cell 0')
+    removeAllEventListeners();
+    makeMove(2);
+};
+function MakeTickableCell3() {
+    cells[3].innerHTML = 'X';
+    console.log('putting X in cell 0')
+    removeAllEventListeners();
+    makeMove(3);
+};
+function MakeTickableCell4() {
+    cells[4].innerHTML = 'X';
+    console.log('putting X in cell 0')
+    removeAllEventListeners();
+    makeMove(4);
+};
+
+function MakeTickableCell5() {
+    cells[5].innerHTML = 'X';
+    console.log('putting X in cell 0')
+    removeAllEventListeners();
+    makeMove(5);
+};
+
+function MakeTickableCell6() {
+    cells[6].innerHTML = 'X';
+    console.log('putting X in cell 0')
+    removeAllEventListeners();
+    makeMove(6);
+};
+
+function MakeTickableCell7() {
+    cells[7].innerHTML = 'X';
+    console.log('putting X in cell 0')
+    removeAllEventListeners();
+    makeMove(7);
+};
+
+function MakeTickableCell8() {
+    cells[8].innerHTML = 'X';
+    console.log('putting X in cell 0')
+    removeAllEventListeners();
+    makeMove(8);
+};
+
+
+function removeAllEventListeners() {
+    cells[0].removeEventListener("click", MakeTickableCell0);
+    cells[1].removeEventListener("click", MakeTickableCell1);
+    cells[2].removeEventListener("click", MakeTickableCell2);
+    cells[3].removeEventListener("click", MakeTickableCell3);
+    cells[4].removeEventListener("click", MakeTickableCell4);
+    cells[5].removeEventListener("click", MakeTickableCell5);
+    cells[6].removeEventListener("click", MakeTickableCell6);
+    cells[7].removeEventListener("click", MakeTickableCell7);
+    cells[8].removeEventListener("click", MakeTickableCell8);
+
+    for (i = 0; i < 8; i++) {
+        cells[i].classList.remove("clickable");
+    }
+}
+
+function makeCellTickable(cellIndex) {
+    switch (cellIndex) {
+        case 0:
+            cells[0].addEventListener("click", MakeTickableCell0,);
+            cells[0].classList.add("clickable");
+            break;
+        case 1:
+            cells[1].addEventListener("click", MakeTickableCell1,);
+            cells[1].classList.add("clickable");
+            break;
+        case 2:
+            cells[2].addEventListener("click", MakeTickableCell2,);
+            cells[2].classList.add("clickable");
+            break;
+        case 3:
+            cells[3].addEventListener("click", MakeTickableCell3,);
+            cells[3].classList.add("clickable");
+            break;
+        case 4:
+            cells[4].addEventListener("click", MakeTickableCell4);
+            cells[4].classList.add("clickable");
+            break;
+        case 5:
+            cells[5].addEventListener("click", MakeTickableCell5);
+            cells[5].classList.add("clickable");
+            break;
+        case 6:
+            cells[6].addEventListener("click", MakeTickableCell6);
+            cells[6].classList.add("clickable");
+            break;
+        case 7:
+            cells[7].addEventListener("click", MakeTickableCell7);
+            cells[8].classList.add("clickable");
+            break;
+        case 8:
+            cells[8].addEventListener("click", MakeTickableCell8);
+            cells[8].classList.add("clickable");
+            break;
+        default:
+            return;
+    }
+}
+
