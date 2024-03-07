@@ -35,7 +35,7 @@ startGame();
 
 //initialise all cells and make them clickable
 function startGame() {
-    controller = new AbortController();
+    clearAllCells();
     gameBoard = ['', '', '', '', '', '', '', '', ''];
     for (i = 0; i < 9; i++) {
         makeCellTickable(i);
@@ -48,8 +48,7 @@ function makeMove(lastMoveIndex) {
     gameBoard[lastMoveIndex] = 'X'
 
     // Check if player has won. 
-    if (hasTheGameEnded(gameBoard) == 1) {
-        console.log("bien ouèj maggle")
+    if (hasTheGameEnded(gameBoard) != 0) {
         // controller = new AbortController();
         // controller.abort();
         return;
@@ -65,16 +64,18 @@ function makeMove(lastMoveIndex) {
     cells[moveIndex].innerHTML = 'O';
     gameBoard[moveIndex] = 'O'
 
+    //Check if computer has won 
+    if (hasTheGameEnded(gameBoard) != 0) {
+        // controller = new AbortController();
+        // controller.abort();
+        return;
+    }
 
     console.log(gameBoard);
-    console.log(controller)
-    controller = new AbortController();
+
     // make only free cells clickable
     for (i = 0; i < 9; i++) {
         if (gameBoard[i] === '') {
-            // kill all remaining clickable stuff
-            controller.abort();
-            controller = new AbortController();
             makeCellTickable(i)
             console.log(i);
         }
@@ -90,8 +91,6 @@ function hasTheGameEnded(gameBoard) {
     //const winConditions = ['012', '345', '678','036', '147', '258', '048', '264']
     const winConditions = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 6, 4]]
 
-    let gameState = 0;
-
     //First, convert all the moves of the player to a string, made of the indexes of where he/she has played
     let playerMoves = '';
     for (i = 0; i < 9; i++) {
@@ -100,26 +99,63 @@ function hasTheGameEnded(gameBoard) {
         }
     }
 
+    let computerMoves = '';
+    for (i = 0; i < 9; i++) {
+        if (gameBoard[i] == 'O') {
+            computerMoves += String(i);
+        }
+    }
+
+    let numberOfMoves = 0;
+    for (i = 0; i < 9; i++) {
+        if (gameBoard[i] != '') {
+            numberOfMoves += 1;
+        }
+    }
+    if (numberOfMoves >= 9) {
+        console.log('Draft, nobody wins')
+        return 3;
+    }
+
     //Then check for every winning condition if he/she meets it. 
     for (i = 0; i < 8; i++) {
         if (playerMoves.includes(String(winConditions[i][0])) && playerMoves.includes(String(winConditions[i][1])) && playerMoves.includes(String(winConditions[i][2]))) {
-            console.log("c'est win maggle")
-            gameState = 1;
-            // apply 'winning-cell' class to all the cells that made the player win
-            for (i = 0; i < 8; i++) {
-                cells[i].classList.add("winning-cell");
-            }
+            console.log("Good job")
+            // apply 'winning-cell' to all win conditions that were met
+            cells[winConditions[i][0]].classList.add("winning-cell");
+            cells[winConditions[i][1]].classList.add("winning-cell");
+            cells[winConditions[i][2]].classList.add("winning-cell");
+
+            return 1;
+        }
+    }
+
+    //Then check for every winning condition if he/she meets it. 
+    for (i = 0; i < 8; i++) {
+        if (computerMoves.includes(String(winConditions[i][0])) && computerMoves.includes(String(winConditions[i][1])) && computerMoves.includes(String(winConditions[i][2]))) {
+            console.log("Sorry mate")
+
+            // apply 'winning-cell' to all win conditions that were met
+            cells[winConditions[i][0]].classList.add("winning-cell");
+            cells[winConditions[i][1]].classList.add("winning-cell");
+            cells[winConditions[i][2]].classList.add("winning-cell");
+
+            return 2;
         }
     }
 
 
 
     // If no end gmae condition is met, the game continues.
-    return gameState;
+    return 0;
 }
 
 
-
+function clearAllCells(){
+    for (i = 0; i < 9; i++) {
+        cells[i].innerHTML='';
+    }
+}
 
 
 
@@ -204,7 +240,7 @@ function removeAllEventListeners() {
     cells[7].removeEventListener("click", MakeTickableCell7);
     cells[8].removeEventListener("click", MakeTickableCell8);
 
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < 9; i++) {
         cells[i].classList.remove("clickable");
     }
 }
@@ -241,7 +277,7 @@ function makeCellTickable(cellIndex) {
             break;
         case 7:
             cells[7].addEventListener("click", MakeTickableCell7);
-            cells[8].classList.add("clickable");
+            cells[7].classList.add("clickable");
             break;
         case 8:
             cells[8].addEventListener("click", MakeTickableCell8);
