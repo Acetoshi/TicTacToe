@@ -2,7 +2,8 @@
     --color-light : #F8FFE5;
     --color-good : #06D6A0;
     --color-bad: #EF476F;
-    --color-background : #1B9AAA;
+    /* #1B9AAA; */
+    --color-background : #3C3D40;
     --color-highlight :#FFC43D;
 
     --grid-font: "Dongle", sans-serif;
@@ -34,6 +35,7 @@ nav {
 
 main{
     display: flex;
+    flex-direction: column;
     height: 100vh;
     justify-content: center;
     align-items: center;
@@ -68,6 +70,38 @@ main{
     font-size:var(--grid-font-size);
 }
 
+.losing-cell {
+    height: 200px;
+    width: 200px;
+    background-color: var(--color-bad);
+    border-radius: 10px;
+    font-family: var(--grid-font);
+    font-size:var(--grid-font-size);
+}
+
 .clickable:hover {
     transform: scale(1.2);
+}
+
+
+/* Rematch button */
+
+#rematch-button {
+    margin: 30px;
+    border: 0;
+    padding: 10px;
+    width: 200px;
+    border-radius: 10px;
+    font-family: var(--grid-font);
+    font-size: 50px;
+    background-color: var(--color-light);
+}
+
+#rematch-button:hover {
+    background-color: var(--color-good);
+    transform: scale(1.2);
+}
+
+.hidden{
+    display: none;
 }

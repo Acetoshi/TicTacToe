@@ -24,6 +24,8 @@ const cells = [
     document.getElementById("000000001")
 ]
 
+const rematchButton = document.getElementById("rematch-button");
+
 //This will be used to abort all event listeners after the player has clicked on his cell, so one for each turn
 let controller = new AbortController();
 
@@ -32,13 +34,17 @@ let controller = new AbortController();
 let gameBoard = ['', '', '', '', '', '', '', '', ''];
 
 startGame();
+rematchButton.addEventListener("click", startGame);
 
 //initialise all cells and make them clickable
 function startGame() {
     clearAllCells();
+    rematchButton.classList.add("hidden");
     gameBoard = ['', '', '', '', '', '', '', '', ''];
     for (i = 0; i < 9; i++) {
         makeCellTickable(i);
+        cells[i].classList.remove("winning-cell");
+        cells[i].classList.remove("losing-cell");
     };
 }
 
@@ -49,8 +55,8 @@ function makeMove(lastMoveIndex) {
 
     // Check if player has won. 
     if (hasTheGameEnded(gameBoard) != 0) {
-        // controller = new AbortController();
-        // controller.abort();
+        //Make rematch button appear
+        rematchButton.classList.remove("hidden");
         return;
     }
 
@@ -66,8 +72,8 @@ function makeMove(lastMoveIndex) {
 
     //Check if computer has won 
     if (hasTheGameEnded(gameBoard) != 0) {
-        // controller = new AbortController();
-        // controller.abort();
+        //Make rematch button appear
+        rematchButton.classList.remove("hidden");
         return;
     }
 
@@ -99,24 +105,6 @@ function hasTheGameEnded(gameBoard) {
         }
     }
 
-    let computerMoves = '';
-    for (i = 0; i < 9; i++) {
-        if (gameBoard[i] == 'O') {
-            computerMoves += String(i);
-        }
-    }
-
-    let numberOfMoves = 0;
-    for (i = 0; i < 9; i++) {
-        if (gameBoard[i] != '') {
-            numberOfMoves += 1;
-        }
-    }
-    if (numberOfMoves >= 9) {
-        console.log('Draft, nobody wins')
-        return 3;
-    }
-
     //Then check for every winning condition if he/she meets it. 
     for (i = 0; i < 8; i++) {
         if (playerMoves.includes(String(winConditions[i][0])) && playerMoves.includes(String(winConditions[i][1])) && playerMoves.includes(String(winConditions[i][2]))) {
@@ -129,21 +117,37 @@ function hasTheGameEnded(gameBoard) {
             return 1;
         }
     }
-
+    // Same thing for the computer
+    let computerMoves = '';
+    for (i = 0; i < 9; i++) {
+        if (gameBoard[i] == 'O') {
+            computerMoves += String(i);
+        }
+    }
     //Then check for every winning condition if he/she meets it. 
     for (i = 0; i < 8; i++) {
         if (computerMoves.includes(String(winConditions[i][0])) && computerMoves.includes(String(winConditions[i][1])) && computerMoves.includes(String(winConditions[i][2]))) {
             console.log("Sorry mate")
 
             // apply 'winning-cell' to all win conditions that were met
-            cells[winConditions[i][0]].classList.add("winning-cell");
-            cells[winConditions[i][1]].classList.add("winning-cell");
-            cells[winConditions[i][2]].classList.add("winning-cell");
+            cells[winConditions[i][0]].classList.add("losing-cell");
+            cells[winConditions[i][1]].classList.add("losing-cell");
+            cells[winConditions[i][2]].classList.add("losing-cell");
 
             return 2;
         }
     }
-
+    // Check for a Draw
+    let numberOfMoves = 0;
+    for (i = 0; i < 9; i++) {
+        if (gameBoard[i] != '') {
+            numberOfMoves += 1;
+        }
+    }
+    if (numberOfMoves >= 9) {
+        console.log('Draft, nobody wins')
+        return 3;
+    }
 
 
     // If no end gmae condition is met, the game continues.
@@ -151,9 +155,9 @@ function hasTheGameEnded(gameBoard) {
 }
 
 
-function clearAllCells(){
+function clearAllCells() {
     for (i = 0; i < 9; i++) {
-        cells[i].innerHTML='';
+        cells[i].innerHTML = '';
     }
 }
 
