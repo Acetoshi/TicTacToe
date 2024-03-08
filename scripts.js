@@ -92,9 +92,9 @@ function makeMove(lastMoveIndex) {
     gameBoard[moveIndex] = 'O'
 
     /// here add a trigger to animate the ticking of the computer
-   
     cells[moveIndex].classList.add('ticked-by-computer'); 
-    sleep(500).then(() => { cells[moveIndex].classList.remove('ticked-by-computer'); });
+    /// seems like there's no sleep function in js, so i found this one online
+    sleep(200).then(() => { cells[moveIndex].classList.remove('ticked-by-computer'); });
 
 
     //Check if computer has won 

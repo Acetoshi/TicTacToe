@@ -97,14 +97,14 @@ h1 {
 .clickable:hover {
     transform: scale(1.2);
     transition-property: transform;
-    transition-duration: .3s;
+    transition-duration: .15s;
     transition-timing-function: ease-in-out;
 }
 
 .ticked-by-computer {
     transform: scale(1.2);
     transition-property: transform;
-    transition-duration: .3s;
+    transition-duration: .15s;
     transition-timing-function: ease-in-out;
 }
 
@@ -135,7 +135,7 @@ h1 {
 /* switching between interfaces */
 
 #switch-interfaces-button {
-    width:20vh;
+    width:10vh;
     background-color: none;
     border: 0;
     position: absolute;
@@ -147,11 +147,11 @@ h1 {
 }
 
 #switch-interfaces-button:hover {
-    transform: scale(2);
+    transform: scale(2)translate(-2.5vh, -2.5vh);
     position: absolute;
     bottom: 0px;
     right: 0px;
     transition-property: transform;
-    transition-duration: .5s;
+    transition-duration: .3s;
     transition-timing-function: linear;
 }
