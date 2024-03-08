@@ -15,21 +15,55 @@
 
 <body>
     <header>
-        <nav>Train It Yourself Tic Tac Toe</nav>
+        <nav>Train Tac Toe
+            <img src="./PageCorner.svg" id="switch-interfaces-button">
+            
+        </nav>
     </header>
     <main>
-        <section class="grid">
-            <div class="cell" id="100000000"></div>
-            <div class="cell" id="010000000">X</div>
-            <div class="cell" id="001000000">x</div>
-            <div class="cell" id="000100000"></div>
-            <div class="cell" id="000010000"></div>
-            <div class="cell" id="000001000"></div>
-            <div class="cell" id="000000100"></div>
-            <div class="cell" id="000000010"></div>
-            <div class="cell" id="000000001"></div>
-        </section>
-        <button id="rematch-button">rematch</button>
+        <div id="play-interface" class="">
+            <!-- The double div was needed in order to select th play-interface with its Id in JS and still have the class apply in CSS, otherwise specificity made it not hide -->
+            <div id="play-interface-inner-container">
+                <h1>Train the computer by playing</h1>
+                <section class="grid">
+                    <div class="cell" id="100000000"></div>
+                    <div class="cell" id="010000000"></div>
+                    <div class="cell" id="001000000"></div>
+                    <div class="cell" id="000100000"></div>
+                    <div class="cell" id="000010000"></div>
+                    <div class="cell" id="000001000"></div>
+                    <div class="cell" id="000000100"></div>
+                    <div class="cell" id="000000010"></div>
+                    <div class="cell" id="000000001"></div>
+                </section>
+                <button id="rematch-button">rematch</button>
+
+            </div>
+        </div>
+        <div id="machine-interface" class="hidden">
+            <h2>How does it work ?</h2>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia molestiae, magni eos quos ut autem ipsa
+                neque quibusdam obcaecati, vero possimus exercitationem, nam sunt consequatur laborum fugiat voluptatum.
+                Cumque, enim.
+                Excepturi, doloribus? Impedit, expedita omnis explicabo amet nihil, repellat fugit quos corrupti
+                asperiores pariatur, cupiditate ducimus consequatur? Consectetur nesciunt iusto, at aliquid vero sit ex
+                consequuntur nostrum alias rem a?
+                Aperiam quis non hic impedit! Cupiditate temporibus qui deserunt eveniet tenetur ducimus ea
+                exercitationem cumque, doloremque voluptate aliquam ut aliquid provident consequatur quis suscipit
+                dolores saepe earum accusamus impedit beatae.
+                Vitae, a consequatur corporis consequuntur nostrum cumque id quidem ratione aut nesciunt modi at,
+                repellat animi unde, numquam nam aperiam excepturi porro suscipit. Facilis vero eum error maiores esse
+                asperiores!
+            </p>
+
+            <h2>What does the data look like ?</h2>
+            <ul>
+                <li>une ligne</li>
+                <li>une ligne</li>
+                <li>une ligne</li>
+                <li>une ligne</li>
+            </ul>
+        </div>
     </main>
     <footer>
 

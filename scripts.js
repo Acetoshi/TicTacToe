@@ -24,17 +24,24 @@ const cells = [
     document.getElementById("000000001")
 ]
 
+// Declaration of buttons on the page
 const rematchButton = document.getElementById("rematch-button");
+const switchInterfacesButton = document.getElementById("switch-interfaces-button");
 
-//This will be used to abort all event listeners after the player has clicked on his cell, so one for each turn
-let controller = new AbortController();
+const playInterface = document.getElementById("play-interface");
+const machineInterface = document.getElementById("machine-interface");
 
+// this variable can equal "game" or "machine" to display two different pages in one
+let interface = "game";
 
 // the gameboard will be represented by an array of length 9, containing '', 'X' or 'O' 
 let gameBoard = ['', '', '', '', '', '', '', '', ''];
 
 startGame();
 rematchButton.addEventListener("click", startGame);
+switchInterfacesButton.addEventListener("click", switchInterfaces);
+
+
 
 //initialise all cells and make them clickable
 function startGame() {
@@ -48,6 +55,20 @@ function startGame() {
     };
 }
 
+// This functions probes the state of the page, and applies "hidden" class to the other one.
+function switchInterfaces() {
+    console.log("switch button works")
+    if (interface == "game") {
+        playInterface.classList.add("hidden");
+        machineInterface.classList.remove("hidden");
+        interface = 'machine';
+    } else if (interface == "machine") {
+        playInterface.classList.remove("hidden");
+        machineInterface.classList.add("hidden");
+        interface = 'game';
+    }
+    console.log('now displaying ' + interface);
+}
 
 function makeMove(lastMoveIndex) {
 
@@ -70,6 +91,12 @@ function makeMove(lastMoveIndex) {
     cells[moveIndex].innerHTML = 'o';
     gameBoard[moveIndex] = 'O'
 
+    /// here add a trigger to animate the ticking of the computer
+   
+    cells[moveIndex].classList.add('ticked-by-computer'); 
+    sleep(500).then(() => { cells[moveIndex].classList.remove('ticked-by-computer'); });
+
+
     //Check if computer has won 
     if (hasTheGameEnded(gameBoard) != 0) {
         //Make rematch button appear
@@ -87,6 +114,13 @@ function makeMove(lastMoveIndex) {
         }
     }
 }
+
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  
+
 
 
 //This function checks if the game isn't finished (0) has been won(1), lost(2), or if it's a draw.
