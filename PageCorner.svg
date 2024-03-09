@@ -26,9 +26,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
-     inkscape:zoom="0.74410842"
-     inkscape:cx="654.47452"
-     inkscape:cy="-143.79625"
+     inkscape:zoom="2.6571776"
+     inkscape:cx="39.139273"
+     inkscape:cy="76.39685"
      inkscape:window-width="1920"
      inkscape:window-height="1036"
      inkscape:window-x="0"
@@ -46,4 +46,8 @@
        sodipodi:nodetypes="sccss"
        inkscape:export-filename="FlipCorner.png"
        inkscape:export-xdpi="96"
-       inkscape:export-ydpi="96" /></g></svg>
+       inkscape:export-ydpi="96" /><path
+       id="rect1"
+       style="fill:#9a9e93;stroke-width:3.02942;stroke-linecap:round;stroke-linejoin:round"
+       d="m 196.01281,177.68298 v 53.03217 h -52.99175 z"
+       sodipodi:nodetypes="cccc" /></g></svg>

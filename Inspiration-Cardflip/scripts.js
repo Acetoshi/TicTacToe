@@ -26,10 +26,9 @@ const cells = [
 
 // Declaration of buttons on the page
 const rematchButton = document.getElementById("rematch-button");
-const backFaceFlipButton = document.getElementById("back-face-flip-button");
-const frontFaceFlipButton = document.getElementById("front-face-flip-button");
+const switchInterfacesButton = document.getElementById("navbar");
 
-const interfaceCard = document.getElementById("interface")
+const interfaceCard = document.querySelector('.card');
 
 
 // the gameboard will be represented by an array of length 9, containing '', 'X' or 'O' 
@@ -37,8 +36,7 @@ let gameBoard = ['', '', '', '', '', '', '', '', ''];
 
 startGame();
 rematchButton.addEventListener("click", startGame);
-frontFaceFlipButton.addEventListener("click", flipInterfaceCard);
-backFaceFlipButton.addEventListener("click", flipInterfaceCard);
+switchInterfacesButton.addEventListener("click", flipInterfaceCard);
 
 
 //initialise all cells and make them clickable
@@ -56,7 +54,6 @@ function startGame() {
 // This functions probes the state of the page, and applies "hidden" class to the other one.
 function flipInterfaceCard() {
     interfaceCard.classList.toggle('is-flipped');
-    console.log('flip')
 }
 
 function makeMove(lastMoveIndex) {
