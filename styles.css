@@ -7,7 +7,9 @@
     --color-highlight: #FFC43D;
 
     --grid-font: "Dongle", sans-serif;
-    --grid-font-size: 300px;
+    --grid-font-size: calc(var(--cell-size)* 3 /2);
+
+    --cell-size: 15vh;
 }
 
 /* RESET ALL BROWSER margins & paddings */
@@ -55,13 +57,13 @@ h1 {
 .grid {
     display: grid;
     grid-template: 1fr 1fr 1fr / 1fr 1fr 1fr;
-    gap: 30px;
+    gap: calc(var(--cell-size)*30 /200);
 }
 
 /* Cells styles  */
 .cell {
-    height: 200px;
-    width: 200px;
+    height: var(--cell-size);
+    width: var(--cell-size);
     background-color: var(--color-light);
     border-radius: 10px;
     display: flex;
@@ -77,8 +79,8 @@ h1 {
 }
 
 .winning-cell {
-    height: 200px;
-    width: 200px;
+    height: var(--cell-size);
+    width: var(--cell-size);
     background-color: var(--color-good);
     border-radius: 10px;
     font-family: var(--grid-font);
@@ -86,8 +88,8 @@ h1 {
 }
 
 .losing-cell {
-    height: 200px;
-    width: 200px;
+    height: var(--cell-size);
+    width: var(--cell-size);
     background-color: var(--color-bad);
     border-radius: 10px;
     font-family: var(--grid-font);
@@ -112,10 +114,10 @@ h1 {
 /* Rematch button */
 
 #rematch-button {
-    margin: 30px;
+    margin: calc(var(--cell-size)*30 /200);
     border: 0;
     padding: 10px;
-    width: 200px;
+    width: var(--cell-size);
     border-radius: 10px;
     font-family: var(--grid-font);
     font-size: 50px;
@@ -135,7 +137,7 @@ h1 {
 /* switching between interfaces */
 
 #switch-interfaces-button {
-    width:10vh;
+    width: 10vh;
     background-color: none;
     border: 0;
     position: absolute;
