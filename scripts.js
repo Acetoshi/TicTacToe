@@ -1,9 +1,5 @@
 
-//TODO : a chaque tour, les fonctions continuent d'exister. 
-// pbl : the event listeners multiply in a recursive fashion (ie turn 3 there's 3 eventListeners.)
-
-// A ESSAYER : créer 9 fonction différentes et les utiliser en fonciton de i fonctions (makeTickableCell1, makeTickableCell2)
-// element.removeEventListener("mousedown", tickCell1, true);
+//TODO : finaliser la factorisation de 'whoHasWon' (manquent les couleurs) et remplacer 'has the game ended'
 
 
 
@@ -38,60 +34,102 @@ let gameBoard = ['.', '.', '.', '.', '.', '.', '.', '.', '.'];
 
 // this is an array that will store the whole game, all of the board states and the computer responses. 
 let gameHistory = [];
-let computerMovesHistory = [];
+
+// this stores every situation the game has encountered
+let computerDatabase = [];
+
+
 
 startGame();
 rematchButton.addEventListener("click", startGame);
 frontFaceFlipButton.addEventListener("click", flipInterfaceCard);
 backFaceFlipButton.addEventListener("click", flipInterfaceCard);
 
+// this function take a computerMovesHistory array to analyse it, and adjust the corresponding weights in the dataBase object
+function analyseGame(gameHistory, initialWeigth) {
 
-//initialise all cells and make them clickable
-function startGame() {
-    clearAllCells();
-    rematchButton.classList.add("hidden");
-    gameBoard = ['.', '.', '.', '.', '.', '.', '.', '.', '.'];
-    for (i = 0; i < 9; i++) {
-        makeCellTickable(i);
-        cells[i].classList.remove("winning-cell");
-        cells[i].classList.remove("losing-cell");
-    };
-}
+    let resultOfTheGame = whoHasWon(gameHistory[gameHistory.length - 1], 'X', 'O')[0];
+    console.log(resultOfTheGame);
+    //console.log(resultOfTheGame);
+    // first check if there was a new situation
+    for (let i = 0; i < gameHistory.length; i++) {
+        if (containsSimilar (computerDatabase,gameHistory[i])){
 
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-
-function randomMove(gameBoard) {
-    let moveIndex = Math.floor(Math.random() * 8);
-    while (gameBoard[moveIndex] != '.') {
-        moveIndex = Math.floor(Math.random() * 8);
+        } else {
+            //add the gamestate to the database and add new weights to it
+            computerDatabase.push([gameHistory[i],[0,2,2,2]]);
+        }
     }
-    return moveIndex;
+    console.log(computerDatabase)
+
+    
+
+    // if the situation isn't new, adjust existing weights
 }
+
+// this function takes an array of arrays, and an array
+function containsSimilar(arrayA, arrayB) {
+    for (let i = 0; i < arrayA.length; i++) {
+        if (arrayA[i] === arrayB) {
+            return true;
+        }
+
+    }
+    return false;
+}
+
 
 function displayGameHistory(gameHistoryArray) {
 
-    //clear the last game history 
+    //clear the last game history in the HTML file
     gameHistoryList.innerHTML = " ";
 
     for (let j = 0; j < gameHistoryArray.length; j++) {
 
         let ul = document.createElement("ul");
         ul.classList.add('mini-grid');
+        let resultOfTheGame = whoHasWon(gameHistoryArray[j], 'X', 'O');
 
-        for (let i = 0; i < 9; i++) {
-            let li = document.createElement("li");
-            li.classList.add('mini-cell');
-            //Compact if else statement
-            li.innerHTML =  (gameHistoryArray[j][i] != '.' ) ? gameHistoryArray[j][i]: '' ;
-            ul.appendChild(li);
+
+        /// this part is badly coded and can propably be refactored. 
+
+        //player has won
+        if (resultOfTheGame[0] == 1) {
+            for (let i = 0; i < 9; i++) {
+                let li = document.createElement("li");
+                li.classList.add('mini-cell');
+                if (i == resultOfTheGame[1][0] || i == resultOfTheGame[1][1] || i == resultOfTheGame[1][2]) {
+                    li.classList.add('losing-cell');
+                }
+                //Compact if else statement
+                li.innerHTML = (gameHistoryArray[j][i] != '.') ? gameHistoryArray[j][i] : '';
+                ul.appendChild(li);
+            }
         }
-
+        //computer has won
+        else if (resultOfTheGame[0] == 2) {
+            for (let i = 0; i < 9; i++) {
+                let li = document.createElement("li");
+                li.classList.add('mini-cell');
+                if (i == resultOfTheGame[1][0] || i == resultOfTheGame[1][1] || i == resultOfTheGame[1][2]) {
+                    li.classList.add('winning-cell');
+                }
+                //Compact if else statement
+                li.innerHTML = (gameHistoryArray[j][i] != '.') ? gameHistoryArray[j][i] : '';
+                ul.appendChild(li);
+            }
+        }
+        // nobody has won this turn
+        else {
+            for (let i = 0; i < 9; i++) {
+                let li = document.createElement("li");
+                li.classList.add('mini-cell');
+                //Compact if else statement
+                li.innerHTML = (gameHistoryArray[j][i] != '.') ? gameHistoryArray[j][i] : '';
+                ul.appendChild(li);
+            }
+        }
         gameHistoryList.appendChild(ul);
-
     }
 }
 
@@ -111,9 +149,8 @@ function makeMove(lastMoveIndex) {
     if (hasTheGameEnded(gameBoard) != 0) {
         //Make rematch button appear
         rematchButton.classList.remove("hidden");
-        console.log("game history display requested")
-        console.log(gameHistory);
         displayGameHistory(gameHistory);
+        analyseGame(gameHistory, 2);
         return;
     }
 
@@ -121,21 +158,14 @@ function makeMove(lastMoveIndex) {
     // DUMB MODE : the computer plays at random 
     let moveIndex = randomMove(gameBoard);
 
-
-
-
-    //put in memory what the situation was, and what the game responded.
-    computerMovesHistory.push([gameBoard.join('').split(''), moveIndex]);
-
-
+    //display computer move on the board
     cells[moveIndex].innerHTML = 'o';
     gameBoard[moveIndex] = 'O'
 
     //add the game state to gameHistory
-    console.log(gameBoard)
     gameHistory.push(gameBoard.join('').split(''));
 
-    /// here add a trigger to animate the ticking of the computer
+    /// adding this clas triggers an animation to communicate the ticking of the computer
     cells[moveIndex].classList.add('ticked-by-computer');
     /// seems like there's no sleep function in js, so i found this one online
     sleep(200).then(() => { cells[moveIndex].classList.remove('ticked-by-computer'); });
@@ -144,12 +174,10 @@ function makeMove(lastMoveIndex) {
     if (hasTheGameEnded(gameBoard) != 0) {
         //Make rematch button appear
         rematchButton.classList.remove("hidden");
-        console.log("game history display requested")
         displayGameHistory(gameHistory);
+        analyseGame(gameHistory, 2);
         return;
     }
-
-
 
     // make only free cells clickable
     for (i = 0; i < 9; i++) {
@@ -159,27 +187,58 @@ function makeMove(lastMoveIndex) {
     }
 }
 
+function getMoves(gameBoard, playerSymbol) {
+    let Moves = '';
+    for (i = 0; i < 9; i++) {
+        if (gameBoard[i] == playerSymbol) {
+            Moves += String(i);
+        }
+    }
+    return Moves;
+}
+
+//This function checks who has won : no one(0), player1 (1), player2 (2), or draw(3). it also returns the winning moves indexes [a,b,c] returns looks like [x,[a,b,c]]
+function whoHasWon(gameBoard, player1Symbol, player2Symbol) {
+    const winConditions = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 6, 4]];
+    let player1Moves = getMoves(gameBoard, player1Symbol);
+    let player2Moves = getMoves(gameBoard, player2Symbol);
+    //Check for wincons in the two player moves at the same time, cause they can't win at the same time.
+    for (i = 0; i < 8; i++) {
+        if (player1Moves.includes(String(winConditions[i][0])) && player1Moves.includes(String(winConditions[i][1])) && player1Moves.includes(String(winConditions[i][2]))) {
+            return [1, winConditions[i]];
+        }
+        if (player2Moves.includes(String(winConditions[i][0])) && player2Moves.includes(String(winConditions[i][1])) && player2Moves.includes(String(winConditions[i][2]))) {
+            return [2, winConditions[i]];
+        }
+    }
+    //Check for a draw
+
+    let numberOfMoves = 0;
+    for (i = 0; i < 9; i++) {
+        if (gameBoard[i] != '.') {
+            numberOfMoves += 1;
+        }
+    }
+    if (numberOfMoves >= 9) {
+        return [3, []];
+    }
 
 
+    // If no end gmae condition is met, the game continues.
+    return [0, []];
+}
 
 
-
-
-//This function checks if the game isn't finished (0) has been won(1), lost(2), or if it's a draw.
+//This function checks if the game isn't finished (0) has been won(1), lost(2), or if it's a draw(3).
 function hasTheGameEnded(gameBoard) {
     //  0 1 2
     //  3 4 5
     //  6 7 8
-    //const winConditions = ['012', '345', '678','036', '147', '258', '048', '264']
+
     const winConditions = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 6, 4]]
 
     //First, convert all the moves of the player to a string, made of the indexes of where he/she has played
-    let playerMoves = '';
-    for (i = 0; i < 9; i++) {
-        if (gameBoard[i] == 'X') {
-            playerMoves += String(i);
-        }
-    }
+    let playerMoves = getMoves(gameBoard, 'X');
 
     //Then check for every winning condition if he/she meets it. 
     for (i = 0; i < 8; i++) {
@@ -193,12 +252,8 @@ function hasTheGameEnded(gameBoard) {
         }
     }
     // Same thing for the computer
-    let computerMoves = '';
-    for (i = 0; i < 9; i++) {
-        if (gameBoard[i] == 'O') {
-            computerMoves += String(i);
-        }
-    }
+    let computerMoves = getMoves(gameBoard, 'O');
+
     //Then check for every winning condition if he/she meets it. 
     for (i = 0; i < 8; i++) {
         if (computerMoves.includes(String(winConditions[i][0])) && computerMoves.includes(String(winConditions[i][1])) && computerMoves.includes(String(winConditions[i][2]))) {
@@ -227,6 +282,34 @@ function hasTheGameEnded(gameBoard) {
     return 0;
 }
 
+//initialise all cells and make them clickable
+function startGame() {
+
+    clearAllCells();
+    rematchButton.classList.add("hidden");
+    gameBoard = ['.', '.', '.', '.', '.', '.', '.', '.', '.'];
+    gameHistory = [];
+
+    for (i = 0; i < 9; i++) {
+        makeCellTickable(i);
+        cells[i].classList.remove("winning-cell");
+        cells[i].classList.remove("losing-cell");
+    };
+}
+
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+function randomMove(gameBoard) {
+    let moveIndex = Math.floor(Math.random() * 8);
+    while (gameBoard[moveIndex] != '.') {
+        moveIndex = Math.floor(Math.random() * 8);
+    }
+    return moveIndex;
+}
 
 function clearAllCells() {
     for (i = 0; i < 9; i++) {

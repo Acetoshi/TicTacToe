@@ -82,21 +82,19 @@ ul {
 }
 
 .winning-cell {
-    height: var(--cell-size);
-    width: var(--cell-size);
     background-color: var(--color-good);
-    border-radius: 10px;
-    font-family: var(--grid-font);
-    font-size: var(--grid-font-size);
 }
 
 .losing-cell {
-    height: var(--cell-size);
-    width: var(--cell-size);
     background-color: var(--color-bad);
-    border-radius: 10px;
-    font-family: var(--grid-font);
-    font-size: var(--grid-font-size);
+}
+
+/* i had to duplicate this otherwise i think there was a specificity problem */
+.mini-cell.losing-cell {
+    background-color: var(--color-bad);
+}
+.mini-cell.winning-cell {
+    background-color: var(--color-good);
 }
 
 .clickable:hover {
