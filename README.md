@@ -1,6 +1,6 @@
 # TicTacToe
 
-*/!\ This repo is a work in progress /!\*
+* /!\ This repo is a work in progress /!\ *
 
 This project aims at making a web page that can help people understand what reinforced machine learning is. You play Tic Tac Toe against the comuter and ca see the live database that it uses to make its move against you. 
 

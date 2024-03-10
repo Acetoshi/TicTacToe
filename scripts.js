@@ -25,15 +25,20 @@ const cells = [
 ]
 
 // Declaration of buttons on the page
+const interfaceCard = document.getElementById("interface");
 const rematchButton = document.getElementById("rematch-button");
 const backFaceFlipButton = document.getElementById("back-face-flip-button");
 const frontFaceFlipButton = document.getElementById("front-face-flip-button");
+const gameHistoryList = document.getElementById("game-history");
 
-const interfaceCard = document.getElementById("interface")
 
 
-// the gameboard will be represented by an array of length 9, containing '', 'X' or 'O' 
-let gameBoard = ['', '', '', '', '', '', '', '', ''];
+// the gameboard will be represented by an array of length 9, containing '.', 'X' or 'O' 
+let gameBoard = ['.', '.', '.', '.', '.', '.', '.', '.', '.'];
+
+// this is an array that will store the whole game, all of the board states and the computer responses. 
+let gameHistory = [];
+let computerMovesHistory = [];
 
 startGame();
 rematchButton.addEventListener("click", startGame);
@@ -45,7 +50,7 @@ backFaceFlipButton.addEventListener("click", flipInterfaceCard);
 function startGame() {
     clearAllCells();
     rematchButton.classList.add("hidden");
-    gameBoard = ['', '', '', '', '', '', '', '', ''];
+    gameBoard = ['.', '.', '.', '.', '.', '.', '.', '.', '.'];
     for (i = 0; i < 9; i++) {
         makeCellTickable(i);
         cells[i].classList.remove("winning-cell");
@@ -53,62 +58,110 @@ function startGame() {
     };
 }
 
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+function randomMove(gameBoard) {
+    let moveIndex = Math.floor(Math.random() * 8);
+    while (gameBoard[moveIndex] != '.') {
+        moveIndex = Math.floor(Math.random() * 8);
+    }
+    return moveIndex;
+}
+
+function displayGameHistory(gameHistoryArray) {
+
+    //clear the last game history 
+    gameHistoryList.innerHTML = " ";
+
+    for (let j = 0; j < gameHistoryArray.length; j++) {
+
+        let ul = document.createElement("ul");
+        ul.classList.add('mini-grid');
+
+        for (let i = 0; i < 9; i++) {
+            let li = document.createElement("li");
+            li.classList.add('mini-cell');
+            //Compact if else statement
+            li.innerHTML =  (gameHistoryArray[j][i] != '.' ) ? gameHistoryArray[j][i]: '' ;
+            ul.appendChild(li);
+        }
+
+        gameHistoryList.appendChild(ul);
+
+    }
+}
+
+
 // This functions probes the state of the page, and applies "hidden" class to the other one.
 function flipInterfaceCard() {
     interfaceCard.classList.toggle('is-flipped');
-    console.log('flip')
 }
 
 function makeMove(lastMoveIndex) {
 
     gameBoard[lastMoveIndex] = 'X'
+    //add the game state to gameHistory
+    gameHistory.push(gameBoard.join('').split('')); // i have to use join and split to get a new instance of the gameBOard array, otherwise the history shows only one state later
 
     // Check if player has won. 
     if (hasTheGameEnded(gameBoard) != 0) {
         //Make rematch button appear
         rematchButton.classList.remove("hidden");
+        console.log("game history display requested")
+        console.log(gameHistory);
+        displayGameHistory(gameHistory);
         return;
     }
 
 
     // DUMB MODE : the computer plays at random 
+    let moveIndex = randomMove(gameBoard);
 
-    let moveIndex = Math.floor(Math.random() * 8);
-    while (gameBoard[moveIndex] != '') {
-        moveIndex = Math.floor(Math.random() * 8);
-    }
+
+
+
+    //put in memory what the situation was, and what the game responded.
+    computerMovesHistory.push([gameBoard.join('').split(''), moveIndex]);
+
+
     cells[moveIndex].innerHTML = 'o';
     gameBoard[moveIndex] = 'O'
 
+    //add the game state to gameHistory
+    console.log(gameBoard)
+    gameHistory.push(gameBoard.join('').split(''));
+
     /// here add a trigger to animate the ticking of the computer
-    cells[moveIndex].classList.add('ticked-by-computer'); 
+    cells[moveIndex].classList.add('ticked-by-computer');
     /// seems like there's no sleep function in js, so i found this one online
     sleep(200).then(() => { cells[moveIndex].classList.remove('ticked-by-computer'); });
-
 
     //Check if computer has won 
     if (hasTheGameEnded(gameBoard) != 0) {
         //Make rematch button appear
         rematchButton.classList.remove("hidden");
+        console.log("game history display requested")
+        displayGameHistory(gameHistory);
         return;
     }
 
-    console.log(gameBoard);
+
 
     // make only free cells clickable
     for (i = 0; i < 9; i++) {
-        if (gameBoard[i] === '') {
+        if (gameBoard[i] === '.') {
             makeCellTickable(i)
-            console.log(i);
         }
     }
 }
 
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-  
+
+
 
 
 
@@ -131,7 +184,6 @@ function hasTheGameEnded(gameBoard) {
     //Then check for every winning condition if he/she meets it. 
     for (i = 0; i < 8; i++) {
         if (playerMoves.includes(String(winConditions[i][0])) && playerMoves.includes(String(winConditions[i][1])) && playerMoves.includes(String(winConditions[i][2]))) {
-            console.log("Good job")
             // apply 'winning-cell' to all win conditions that were met
             cells[winConditions[i][0]].classList.add("winning-cell");
             cells[winConditions[i][1]].classList.add("winning-cell");
@@ -150,7 +202,6 @@ function hasTheGameEnded(gameBoard) {
     //Then check for every winning condition if he/she meets it. 
     for (i = 0; i < 8; i++) {
         if (computerMoves.includes(String(winConditions[i][0])) && computerMoves.includes(String(winConditions[i][1])) && computerMoves.includes(String(winConditions[i][2]))) {
-            console.log("Sorry mate")
 
             // apply 'winning-cell' to all win conditions that were met
             cells[winConditions[i][0]].classList.add("losing-cell");
@@ -163,12 +214,11 @@ function hasTheGameEnded(gameBoard) {
     // Check for a Draw
     let numberOfMoves = 0;
     for (i = 0; i < 9; i++) {
-        if (gameBoard[i] != '') {
+        if (gameBoard[i] != '.') {
             numberOfMoves += 1;
         }
     }
     if (numberOfMoves >= 9) {
-        console.log('Draft, nobody wins')
         return 3;
     }
 
@@ -190,7 +240,6 @@ function clearAllCells() {
 function putSymbol(i, symbol) {
     return function putSymbolCallback() {
         cells[i].innerHTML = symbol;
-        console.log('putting ' + symbol + ' in cell ' + String(i))
         controller.abort();
         makeMove(i);
     };
@@ -198,59 +247,50 @@ function putSymbol(i, symbol) {
 
 function MakeTickableCell0() {
     cells[0].innerHTML = 'x';
-    console.log('putting X in cell 0')
     removeAllEventListeners();
     makeMove(0);
 };
 function MakeTickableCell1() {
     cells[1].innerHTML = 'x';
-    console.log('putting X in cell 0')
     removeAllEventListeners();
     makeMove(1);
 };
 function MakeTickableCell2() {
     cells[2].innerHTML = 'x';
-    console.log('putting X in cell 0')
     removeAllEventListeners();
     makeMove(2);
 };
 function MakeTickableCell3() {
     cells[3].innerHTML = 'x';
-    console.log('putting X in cell 0')
     removeAllEventListeners();
     makeMove(3);
 };
 function MakeTickableCell4() {
     cells[4].innerHTML = 'x';
-    console.log('putting X in cell 0')
     removeAllEventListeners();
     makeMove(4);
 };
 
 function MakeTickableCell5() {
     cells[5].innerHTML = 'x';
-    console.log('putting X in cell 0')
     removeAllEventListeners();
     makeMove(5);
 };
 
 function MakeTickableCell6() {
     cells[6].innerHTML = 'x';
-    console.log('putting X in cell 0')
     removeAllEventListeners();
     makeMove(6);
 };
 
 function MakeTickableCell7() {
     cells[7].innerHTML = 'x';
-    console.log('putting X in cell 0')
     removeAllEventListeners();
     makeMove(7);
 };
 
 function MakeTickableCell8() {
     cells[8].innerHTML = 'x';
-    console.log('putting X in cell 0')
     removeAllEventListeners();
     makeMove(8);
 };

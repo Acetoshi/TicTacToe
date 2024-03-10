@@ -11,6 +11,7 @@
     --grid-font-size: calc(var(--cell-size)* 3 /2);
 
     --cell-size: 15vh;
+    --mini-cell-size: 3vh;
 }
 
 /* RESET ALL BROWSER margins & paddings */
@@ -39,6 +40,13 @@ nav {
 h1 {
     font-family: var(--grid-font);
     font-size: 100px;
+    color: var(--color-highlight);
+
+}
+
+h2 {
+    font-family: var(--grid-font);
+    font-size: 60px;
     color: var(--color-highlight);
 
 }
@@ -170,43 +178,92 @@ ul {
     transition-timing-function: linear;
 }
 
+/* Part about the machine interface (backside) */
+
+
+.card-back-face section {
+    max-width: max-content;
+    place-self: center;
+}
+
+/* GAME HISTORY SECTION */
+
+#game-history {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+
+.mini-grid {
+    display: grid;
+    grid-template: 1fr 1fr 1fr / 1fr 1fr 1fr;
+    gap: calc(var(--mini-cell-size)*30 /200);
+    margin: calc(var(--mini-cell-size)*30 /50);
+    width: calc(var(--mini-cell-size)*3 +var(--mini-cell-size)*60 /200);
+}
+
+.mini-cell {
+    height: var(--mini-cell-size);
+    width: var(--mini-cell-size);
+    background-color: var(--color-light);
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: var(--grid-font);
+    font-size: var(--mini-cell-size);
+    /* user-select help with the behavior of the game by not letting mouse pointer change to select mode */
+    user-select: none;
+}
+
+
 /* Part about flipping the card */
 .scene {
-  width: 100vw;
-  height: 90vh;
-  perspective: 600px;
+    width: 100vw;
+    height: 90vh;
+    perspective: 600px;
 }
 
 .card {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform .5s;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform .5s;
 }
 
 .card.is-flipped {
-  transform: rotateY(-180deg);
+    transform: rotateY(-180deg);
 }
 
 .card-face {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
 
-  background-color: var(--color-background);
-  display: grid;
-  grid-template: 1fr 3fr 1fr / 1fr;
-  justify-items: center;
-  align-items: center;
+
 }
 
 .card-front-face {
-  background: var(--color-background);
+
+    background-color: var(--color-background);
+    display: grid;
+    grid-template: 1fr 3fr 1fr / 1fr;
+    justify-items: center;
+    align-items: center;
 }
 
 .card-back-face {
 
-  transform: rotateY(180deg);
+    transform: rotateY(180deg);
+
+    background-color: var(--color-background);
+    display: grid;
+    grid-template: 1fr 1fr / 1fr 1fr;
+    justify-items: center;
+    align-items: center;
+
+    padding: 50px;
 }
