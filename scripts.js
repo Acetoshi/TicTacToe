@@ -26,6 +26,7 @@ const rematchButton = document.getElementById("rematch-button");
 const backFaceFlipButton = document.getElementById("back-face-flip-button");
 const frontFaceFlipButton = document.getElementById("front-face-flip-button");
 const gameHistoryList = document.getElementById("game-history");
+const dataBaseList = document.getElementById("database");
 
 
 
@@ -36,48 +37,108 @@ let gameBoard = ['.', '.', '.', '.', '.', '.', '.', '.', '.'];
 let gameHistory = [];
 
 // this stores every situation the game has encountered
-let computerDatabase = [];
+let computerDataBase = [];
 
 
 
 startGame();
+
 rematchButton.addEventListener("click", startGame);
 frontFaceFlipButton.addEventListener("click", flipInterfaceCard);
 backFaceFlipButton.addEventListener("click", flipInterfaceCard);
 
 // this function take a computerMovesHistory array to analyse it, and adjust the corresponding weights in the dataBase object
+
 function analyseGame(gameHistory, initialWeigth) {
 
-    let resultOfTheGame = whoHasWon(gameHistory[gameHistory.length - 1], 'X', 'O')[0];
-    console.log(resultOfTheGame);
+    //let resultOfTheGame = whoHasWon(gameHistory[gameHistory.length - 1], 'X', 'O')[0];
     //console.log(resultOfTheGame);
+    let computerMovesHistory = convertToComputerMovesHistory (gameHistory);
     // first check if there was a new situation
-    for (let i = 0; i < gameHistory.length; i++) {
-        if (containsSimilar (computerDatabase,gameHistory[i])){
-
+    computerMovesHistory.forEach(gameBoard => {
+        // this map operation removes the 'M' so that we get the situation the computer was responding to.
+        initialGameBoard=gameBoard.map(string => (string != 'M')? string:'.');
+        // check if the situation is already in the database ( the toString is needed to compare arrays)
+        if (computerDataBase.some(element => removeWeigths(element).toString() === initialGameBoard.toString())){
+            console.log('adjust weights')
         } else {
-            //add the gamestate to the database and add new weights to it
-            computerDatabase.push([gameHistory[i],[0,2,2,2]]);
+            // add the initial situation to the DB
+            // the weight system could be optimized to take symmetry into account
+            const newDataBaseEntry = initialGameBoard.map(string => (string != '.')? string: initialWeigth.toString());
+            computerDataBase.push(newDataBaseEntry);
         }
-    }
-    console.log(computerDatabase)
-
-    
-
-    // if the situation isn't new, adjust existing weights
+        
+    })
+    console.log(computerDataBase);
+    displayDataBase (computerDataBase);
 }
 
-// this function takes an array of arrays, and an array
-function containsSimilar(arrayA, arrayB) {
-    for (let i = 0; i < arrayA.length; i++) {
-        if (arrayA[i] === arrayB) {
-            return true;
+function displayDataBase (computerDataBase){
+    //clear the last game history in the HTML file
+    dataBaseList.innerHTML = " ";
+
+    for (let j = 0; j < computerDataBase.length; j++) {
+
+        let ul = document.createElement("ul");
+        ul.classList.add('mini-grid');
+
+            for (let i = 0; i < 9; i++) {
+                let li = document.createElement("li");
+                li.classList.add('mini-cell');
+                //Compact if else statement
+                li.innerHTML = (computerDataBase[j][i] != '.') ? computerDataBase[j][i] : '';
+                ul.appendChild(li);
+            }
+
+            dataBaseList.appendChild(ul);
+    }
+}
+
+function removeWeigths (DataBaseEntry) {
+ return DataBaseEntry.map( string => (string === 'X'||string==='O')? string:'.' )
+
+}
+
+function lastMoveIndex(gameBoardA,gameBoardB){
+    for(let i=0;i<9;i++){
+        if (gameBoardA[i] != gameBoardB[i]){
+            return i;
+        }
+    }
+}
+
+function countComputerMoves(gameHistory){
+    let count = 0;
+    gameHistory.forEach(element => {
+        count = (lastPlayer(element,'X','O')=='O')? count +1 : count;
+    });
+    return count;
+}
+
+function lastPlayer(gameBoard,symbol1,symbol2) {
+    const player1Moves = gameBoard.filter(symbol => symbol!= '.');
+    const player1NumberOfMoves = player1Moves.length
+    return (player1NumberOfMoves % 2 == 0)?symbol2:symbol1;
+}
+
+function convertToComputerMovesHistory (gameHistory) {
+    let computerMovesHistory=[];
+    let numberOfComputerMoves = countComputerMoves(gameHistory);
+    for (let i = 0; i < (numberOfComputerMoves*2)-1; i++) {
+        // if the last move was human
+        if (lastPlayer(gameHistory[i],'X','O')=='X'){
+            // get the index of the next computer move
+            let nextComputerMove = lastMoveIndex(gameHistory[i],gameHistory[i+1])
+            // make a copy of the array
+            let compressedGameBoard = [...gameHistory[i]]
+            //the letter M represents the decision of the computer at this state of the game
+            compressedGameBoard[nextComputerMove]='M'
+            computerMovesHistory.push(compressedGameBoard);
         }
 
     }
-    return false;
+    return computerMovesHistory;
 }
-
 
 function displayGameHistory(gameHistoryArray) {
 
@@ -164,6 +225,8 @@ function makeMove(lastMoveIndex) {
 
     //add the game state to gameHistory
     gameHistory.push(gameBoard.join('').split(''));
+
+    
 
     /// adding this clas triggers an animation to communicate the ticking of the computer
     cells[moveIndex].classList.add('ticked-by-computer');

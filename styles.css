@@ -2,7 +2,6 @@
     --color-light: #F8FFE5;
     --color-good: #06D6A0;
     --color-bad: #EF476F;
-    /* #1B9AAA; */
     --color-background: #3C3D40;
     --color-blend-bg-lgt: #9A9E93;
     --color-highlight: #FFC43D;
@@ -187,6 +186,12 @@ ul {
 /* GAME HISTORY SECTION */
 
 #game-history {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+#database {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
