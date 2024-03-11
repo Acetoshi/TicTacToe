@@ -197,6 +197,9 @@ ul {
     flex-wrap: wrap;
 }
 
+#database-section {
+ grid-row: span 2;
+}
 
 .mini-grid {
     display: grid;
