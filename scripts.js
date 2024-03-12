@@ -1,9 +1,10 @@
 
 //TODO : finaliser la factorisation de 'whoHasWon' (manquent les couleurs) et remplacer 'has the game ended'
 
+//TODO : if sum is 0, fallback to a random move
+//TODO : 0 can be selected as move !!
 
-
-// grid cells will be refered to using this layout :  
+// grid cells will be referred to using this layout :  
 //  0 1 2
 //  3 4 5
 //  6 7 8
@@ -30,7 +31,7 @@ const dataBaseList = document.getElementById("database");
 
 
 
-// the gameboard will be represented by an array of length 9, containing '.', 'X' or 'O' 
+// the game board will be represented by an array of length 9, containing '.', 'X' or 'O' 
 let gameBoard = ['.', '.', '.', '.', '.', '.', '.', '.', '.'];
 
 // this is an array that will store the whole game, all of the board states and the computer responses. 
@@ -47,9 +48,11 @@ rematchButton.addEventListener("click", startGame);
 frontFaceFlipButton.addEventListener("click", flipInterfaceCard);
 backFaceFlipButton.addEventListener("click", flipInterfaceCard);
 
-// this function take a computerMovesHistory array to analyse it, and adjust the corresponding weights in the dataBase object
 
-function analyseGame(gameHistory, initialWeigth, winningBonus, losingPenalty) {
+
+// this function take a computerMovesHistory array to analyze it, and adjust the corresponding weights in the dataBase object
+
+function analyzeGame(gameHistory, initialWeigth, winningBonus, losingPenalty) {
 
     let resultOfTheGame = whoHasWon(gameHistory[gameHistory.length - 1], 'X', 'O')[0];
     //console.log(resultOfTheGame);
@@ -62,7 +65,7 @@ function analyseGame(gameHistory, initialWeigth, winningBonus, losingPenalty) {
         if ((computerDataBase.some(element => removeWeigths(element).toString() === initialGameBoard.toString()))==false){
             // add the initial situation to the DB
             // the weight system could be optimized to take symmetry into account
-            const newDataBaseEntry = initialGameBoard.map(string => (string != '.')? string: initialWeigth.toString());
+            const newDataBaseEntry = initialGameBoard.map(string => (string != '.')? string: initialWeigth);
             computerDataBase.push(newDataBaseEntry);
         } 
         // After the if, we are sure that the gameBoard is known in the database, so now we need to adjust the weights
@@ -76,13 +79,14 @@ function analyseGame(gameHistory, initialWeigth, winningBonus, losingPenalty) {
         //Step 3 : Increase/decrease the weight based on the result of the game
         //case player wins
         if (resultOfTheGame == 1){
-            dataBaseEntryToModify[computerResponseIndex] -= losingPenalty;
+            (dataBaseEntryToModify[computerResponseIndex]>=1)?dataBaseEntryToModify[computerResponseIndex] -= losingPenalty:0;
         } else if (resultOfTheGame == 2 || resultOfTheGame==3){
-            dataBaseEntryToModify[computerResponseIndex] = parseInt(dataBaseEntryToModify[computerResponseIndex]) + winningBonus;
+            dataBaseEntryToModify[computerResponseIndex] = dataBaseEntryToModify[computerResponseIndex] + winningBonus;
         }
         
     });
     displayDataBase (computerDataBase);
+    console.log(computerDataBase[1]);
 }
 
 function checkDataBaseForMove (gameBoard) {
@@ -91,11 +95,8 @@ function checkDataBaseForMove (gameBoard) {
     if ((computerDataBase.some(element => removeWeigths(element).toString() === gameBoard.toString()))){
         // find the appropriate 
         let relevantDataBaseEntry = computerDataBase[indexOfMatch(computerDataBase,gameBoard)];
-        // Count total number of weights
-
-        // get a random number in this range
-
-        // decide a move index based on that
+        
+        return chooseIndexByWeigth (relevantDataBaseEntry);
 
     } else {
         // if situation isn't known, return a random move
@@ -103,6 +104,30 @@ function checkDataBaseForMove (gameBoard) {
     }
 }
 
+
+function chooseIndexByWeigth (dataBaseEntry){
+    let randomNumber = Math.floor(Math.random() * totalWeights(dataBaseEntry));
+    console.log("random number :",randomNumber)
+    let localSumOfWeights = 0;
+    for (let i = 0; i < 9; i++) {
+        if (typeof dataBaseEntry[i] == 'number') {
+            if (dataBaseEntry[i] + localSumOfWeights >= randomNumber) {
+    
+                return i;
+            } else { localSumOfWeights += dataBaseEntry[i] }
+        }
+    }
+}
+
+function totalWeights(dataBaseEntry){
+    let totalWeights =0;
+    for (let i=0;i<9;i++){
+        if (typeof dataBaseEntry[i] =='number'){
+            totalWeights += dataBaseEntry[i];
+        }
+    }
+    return totalWeights;
+}
 
 function indexOfMatch(arrayOfArrays,array) {
 
@@ -252,13 +277,13 @@ function makeMove(lastMoveIndex) {
         //Make rematch button appear
         rematchButton.classList.remove("hidden");
         displayGameHistory(gameHistory);
-        analyseGame(gameHistory, 5,3,1);
+        analyzeGame(gameHistory, 5,3,1);
         return;
     }
 
 
     // DUMB MODE : the computer plays at random 
-    let moveIndex = randomMove(gameBoard);
+    let moveIndex = checkDataBaseForMove(gameBoard);
 
     //display computer move on the board
     cells[moveIndex].innerHTML = 'o';
@@ -269,7 +294,7 @@ function makeMove(lastMoveIndex) {
 
     
 
-    /// adding this clas triggers an animation to communicate the ticking of the computer
+    /// adding this class triggers an animation to communicate the ticking of the computer
     cells[moveIndex].classList.add('ticked-by-computer');
     /// seems like there's no sleep function in js, so i found this one online
     sleep(200).then(() => { cells[moveIndex].classList.remove('ticked-by-computer'); });
@@ -279,7 +304,7 @@ function makeMove(lastMoveIndex) {
         //Make rematch button appear
         rematchButton.classList.remove("hidden");
         displayGameHistory(gameHistory);
-        analyseGame(gameHistory, 5,3,1);
+        analyzeGame(gameHistory, 5,3,1);
         return;
     }
 
@@ -543,4 +568,3 @@ function makeCellTickable(cellIndex) {
             return;
     }
 }
-
