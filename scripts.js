@@ -49,28 +49,70 @@ backFaceFlipButton.addEventListener("click", flipInterfaceCard);
 
 // this function take a computerMovesHistory array to analyse it, and adjust the corresponding weights in the dataBase object
 
-function analyseGame(gameHistory, initialWeigth) {
+function analyseGame(gameHistory, initialWeigth, winningBonus, losingPenalty) {
 
-    //let resultOfTheGame = whoHasWon(gameHistory[gameHistory.length - 1], 'X', 'O')[0];
+    let resultOfTheGame = whoHasWon(gameHistory[gameHistory.length - 1], 'X', 'O')[0];
     //console.log(resultOfTheGame);
     let computerMovesHistory = convertToComputerMovesHistory (gameHistory);
     // first check if there was a new situation
     computerMovesHistory.forEach(gameBoard => {
         // this map operation removes the 'M' so that we get the situation the computer was responding to.
         initialGameBoard=gameBoard.map(string => (string != 'M')? string:'.');
-        // check if the situation is already in the database ( the toString is needed to compare arrays)
-        if (computerDataBase.some(element => removeWeigths(element).toString() === initialGameBoard.toString())){
-            console.log('adjust weights')
-        } else {
+        // check if the situation is NOT in the database ( the toString is needed to compare arrays)
+        if ((computerDataBase.some(element => removeWeigths(element).toString() === initialGameBoard.toString()))==false){
             // add the initial situation to the DB
             // the weight system could be optimized to take symmetry into account
             const newDataBaseEntry = initialGameBoard.map(string => (string != '.')? string: initialWeigth.toString());
             computerDataBase.push(newDataBaseEntry);
+        } 
+        // After the if, we are sure that the gameBoard is known in the database, so now we need to adjust the weights
+        
+        //Step 1 : find the database entry that corresponds to the situation
+        let dataBaseEntryToModify = computerDataBase[indexOfMatch(computerDataBase,initialGameBoard)];
+
+        //Step 2 : identify how the computer has responded ( its move index, 'M')
+        let computerResponseIndex = gameBoard.indexOf('M');
+
+        //Step 3 : Increase/decrease the weight based on the result of the game
+        //case player wins
+        if (resultOfTheGame == 1){
+            dataBaseEntryToModify[computerResponseIndex] -= losingPenalty;
+        } else if (resultOfTheGame == 2 || resultOfTheGame==3){
+            dataBaseEntryToModify[computerResponseIndex] = parseInt(dataBaseEntryToModify[computerResponseIndex]) + winningBonus;
         }
         
-    })
-    console.log(computerDataBase);
+    });
     displayDataBase (computerDataBase);
+}
+
+function checkDataBaseForMove (gameBoard) {
+
+    // Check if the current situation is known
+    if ((computerDataBase.some(element => removeWeigths(element).toString() === gameBoard.toString()))){
+        // find the appropriate 
+        let relevantDataBaseEntry = computerDataBase[indexOfMatch(computerDataBase,gameBoard)];
+        // Count total number of weights
+
+        // get a random number in this range
+
+        // decide a move index based on that
+
+    } else {
+        // if situation isn't known, return a random move
+        return randomMove(gameBoard);
+    }
+}
+
+
+function indexOfMatch(arrayOfArrays,array) {
+
+    for(let i=0; i < arrayOfArrays.length; i++){
+        if (removeWeigths(arrayOfArrays[i]).toString()===array.toString()){
+            return i;
+        }
+    }
+    //if array isn't found
+    return null;
 }
 
 function displayDataBase (computerDataBase){
@@ -96,7 +138,6 @@ function displayDataBase (computerDataBase){
 
 function removeWeigths (DataBaseEntry) {
  return DataBaseEntry.map( string => (string === 'X'||string==='O')? string:'.' )
-
 }
 
 function lastMoveIndex(gameBoardA,gameBoardB){
@@ -211,7 +252,7 @@ function makeMove(lastMoveIndex) {
         //Make rematch button appear
         rematchButton.classList.remove("hidden");
         displayGameHistory(gameHistory);
-        analyseGame(gameHistory, 2);
+        analyseGame(gameHistory, 5,3,1);
         return;
     }
 
@@ -238,7 +279,7 @@ function makeMove(lastMoveIndex) {
         //Make rematch button appear
         rematchButton.classList.remove("hidden");
         displayGameHistory(gameHistory);
-        analyseGame(gameHistory, 2);
+        analyseGame(gameHistory, 5,3,1);
         return;
     }
 
@@ -249,6 +290,8 @@ function makeMove(lastMoveIndex) {
         }
     }
 }
+
+
 
 function getMoves(gameBoard, playerSymbol) {
     let Moves = '';
